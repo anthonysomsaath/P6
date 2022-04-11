@@ -1,8 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
-const Sauce = require('./models/sauce');
-const productRoutes = require('./routes/sauce');
+const sauceRoutes = require('./routes/sauce');
 
 mongoose.connect('mongodb+srv://go-fullstack:sLGEciCH3UwGUNj6@cluster0.lc0ds.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
 {useNewUrlParser : true,
@@ -21,10 +20,7 @@ app.use((req, res, next) => {
   });
 
 app.use('/api/auth', userRoutes);
-app.use('/api/sauces', productRoutes);
-app.post('/api/sauces', productRoutes);
-app.use((req, res) => {
-    res.json({ message: 'Votre requête a bien été reçue !' }); 
- });
+app.use('/api/sauces', sauceRoutes);
+
 
 module.exports = app;
