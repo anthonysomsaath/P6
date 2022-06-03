@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.createSauce = (req, res, next) => {  
   if (req.body.userId !== console.log(process.userId))  {
-    res.status(403).json({message : 'Non autorisé'});
+    return res.status(403).json({message : 'Non autorisé'});
   } else{
   const sauceObject = JSON.parse(req.body.sauce);
     const sauce = new Sauce({
@@ -49,7 +49,7 @@ exports.createSauce = (req, res, next) => {
   
   exports.modifySauce = (req, res, next) => {
     if (req.body.userId !== console.log(process.userId))  {
-      res.status(403).json({message : 'Non autorisé'});
+      return res.status(403).json({message : 'Non autorisé'});
     } else {
     const sauceObject = req.file ? {
       ...JSON.parse(req.body.sauce),
@@ -63,7 +63,9 @@ exports.createSauce = (req, res, next) => {
   };
    
   exports.deleteSauce = (req, res) => {
-    if (req.body.userId === console.log(process.userId))  {
+    if (req.body.userId !== console.log(process.userId))  {
+      return res.status(403).json({message : 'Non autorisé'});
+    } else {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
 
@@ -98,7 +100,7 @@ exports.createSauce = (req, res, next) => {
     const userId = req.body.userId;
     const sauceId = req.params.id;
     if (req.body.userId !== console.log(process.userId))  {
-      res.status(403).json({message : 'Non autorisé'});
+      return res.status(403).json({message : 'Non autorisé'});
     } else  {
     if(like === 1){
         Sauce.updateOne({ _id: sauceId } ,{ $inc: { likes: 1 }, $push: { usersLiked: userId }})
