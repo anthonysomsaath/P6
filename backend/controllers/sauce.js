@@ -1,7 +1,11 @@
 const Sauce = require('../models/sauce');
 const fs = require('fs');
+const jwt = require("jsonwebtoken");
 
-exports.createSauce = (req, res, next) => {
+exports.createSauce = (req, res, next) => {  
+  if (req.body.userId !== console.log(process.userId))  {
+    res.status(403).json({message : 'Non autorisé'});
+  } else{
   const sauceObject = JSON.parse(req.body.sauce);
     const sauce = new Sauce({
         ...sauceObject,
@@ -24,6 +28,7 @@ exports.createSauce = (req, res, next) => {
         });
       }
     );
+  }
   };
   
   exports.getOneSauce = (req, res, next) => {
@@ -43,6 +48,9 @@ exports.createSauce = (req, res, next) => {
   };
   
   exports.modifySauce = (req, res, next) => {
+    if (req.body.userId !== console.log(process.userId))  {
+      res.status(403).json({message : 'Non autorisé'});
+    } else {
     const sauceObject = req.file ? {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -51,9 +59,11 @@ exports.createSauce = (req, res, next) => {
   Sauce.updateOne({ _id: req.params.id }, {...sauceObject, _id: req.params.id })
       .then(res.status(200).json({ message: "Sauce modifiée" }))
       .catch((error) => res.status(400).json({ error }))
+}
   };
    
   exports.deleteSauce = (req, res) => {
+    if (req.body.userId === console.log(process.userId))  {
     Sauce.findOne({ _id: req.params.id })
         .then((sauce) => {
 
@@ -66,6 +76,7 @@ exports.createSauce = (req, res, next) => {
 
         })
         .catch((error) => res.status(500).json({ error }))
+      }
 };
   
   exports.getAllSauces = (req, res, next) => {
@@ -86,6 +97,9 @@ exports.createSauce = (req, res, next) => {
     const like = req.body.like;
     const userId = req.body.userId;
     const sauceId = req.params.id;
+    if (req.body.userId !== console.log(process.userId))  {
+      res.status(403).json({message : 'Non autorisé'});
+    } else  {
     if(like === 1){
         Sauce.updateOne({ _id: sauceId } ,{ $inc: { likes: 1 }, $push: { usersLiked: userId }})
             .then( () => res.status(200).json({ message: 'Like ajouté !' }))
@@ -109,5 +123,5 @@ exports.createSauce = (req, res, next) => {
             })
             .catch(error => res.status(400).json({ error }))
     }
-
+  }
 }
